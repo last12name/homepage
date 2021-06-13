@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://last12name.github.io/</id>
     <title>Gridea</title>
-    <updated>2021-06-08T07:49:53.449Z</updated>
+    <updated>2021-06-13T11:11:32.297Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://last12name.github.io/"/>
     <link rel="self" href="https://last12name.github.io/atom.xml"/>
@@ -16,22 +16,136 @@
         <link href="https://last12name.github.io/post/hello-gridea/">
         </link>
         <updated>2018-12-11T16:00:00.000Z</updated>
-        <summary type="html"><![CDATA[<p>👏  欢迎使用 <strong>Gridea</strong> ！<br>
-✍️  <strong>Gridea</strong> 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ...</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>👏  欢迎使用 <strong>Gridea</strong> ！<br>
-✍️  <strong>Gridea</strong> 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ...</p>
-<!-- more -->
-<p><a href="https://github.com/getgridea/gridea">Github</a></p>
-<h2 id="特性">特性👇</h2>
-<p>📝  你可以使用最酷的 <strong>Markdown</strong> 语法，进行快速创作</p>
-<p>🌉  你可以给文章配上精美的封面图和在文章任意位置插入图片</p>
-<p>🏷️  你可以对文章进行标签分组</p>
-<p>📋  你可以自定义菜单，甚至可以创建外部链接菜单</p>
-<p>💻  你可以在 <strong>Windows</strong>，<strong>MacOS</strong> 或 <strong>Linux</strong> 设备上使用此客户端</p>
-<p>🌎  你可以使用 <strong>𝖦𝗂𝗍𝗁𝗎𝖻 𝖯𝖺𝗀𝖾𝗌</strong> 或 <strong>Coding Pages</strong> 向世界展示，未来将支持更多平台</p>
-<p>💬  你可以进行简单的配置，接入 <a href="https://github.com/gitalk/gitalk">Gitalk</a> 或 <a href="https://github.com/SukkaW/DisqusJS">DisqusJS</a> 评论系统</p>
-<p>🇬🇧  你可以使用<strong>中文简体</strong>或<strong>英语</strong></p>
+        <content type="html"><![CDATA[<p>a Demo of Glitch Wallpaper Generater</p>
+<pre><code>from typing import List, Tuple
+from PIL import Image, ImageDraw, ImageColor
+import math
+import random
+from PIL.Image import new
+
+from PIL.ImageDraw import Draw
+
+
+def gen_saturated_color() -&gt; Tuple[int, int, int]:
+    random.seed()
+    #随机生成实数
+    if random.uniform(0, 1) &gt; 0.4:
+        return (0, 0, 0)
+    else:
+        #色彩
+        hue = random.uniform(0, 1)
+        #饱和度
+        saturation = random.triangular(0, 1)**0.1
+        #基于高斯分布（正态）随机浮点数 random.gauss(mu, sigma)
+        #正态分布的概率密度函数,其中均值为 (mu) ，方差为 (sigma^2)：
+        # [f(x;mu,sigma)=frac{1}{sqrt{2pi}sigma}exp^{-frac{(x-mu)^2}{2sigma^2}}]
+        #x 维数为 1
+        #使得色块产生更集中
+        value = random.gauss(0.5, 0.2)
+        value = min(max(value, 0), 1)
+        #定义为“hsl(hue,saturation%, lightness%)”
+        # 变量 hue为 [0，360] 一个角度表示颜色（red=0， green=120， blue=240）
+        # 变量 saturation为 [0%，100%] 之间的一个值（gray=0%，full color=100%）
+        # 变量 lightness为 [0%，100%] 之间的一个值（black=0%， normal=50%， white=100%）。
+        # 例如，“hsl(0, 100%, 50%)”为纯红色。
+        return ImageColor.getrgb(&quot;hsl({},{}%,{}%)&quot;.format(
+            int(hue * 360), saturation * 100, value * 100))
+
+
+def draw_glitch_line(image: Image.Image, line_height: int):
+    #进一
+    line_num = math.ceil(image.height / line_height)
+    total_width = line_num * image.width
+    lines = gen_glitch_lines(total_width, line_height / 2,
+                             math.sqrt(image.width) / 5, 2.3)
+    cur_width = 0
+
+    draw = Draw(image)
+
+    for line in lines:
+        print(&quot;Drawing line {}&quot;.format(line))
+
+        new_width = cur_width + line[0]
+        cur_line_num = int(cur_width / image.width)
+        end_line_num = int(new_width / image.width)
+        if end_line_num != cur_line_num:
+            # 画多行  glitch
+            # line 0
+            x0 = cur_width % image.width
+            y0 = cur_line_num * line_height
+            x1 = image.width
+            y1 = (cur_line_num + 1) * line_height
+            #画矩形
+            # PIL.ImageDraw.Draw.rectangle(xy, fill=None, outline=None)
+            # y-四点定义边界框。 [[x0，y0)，(x1，y1)]或[x0，y0，x1，y1]的序列。第二点位于绘制的矩形之外。
+            # outline用于轮廓的颜色
+            # fill用于填充的颜色
+            draw.rectangle([x0, y0, x1, y1], fill=line[1])
+
+            if end_line_num - cur_line_num &gt; 1:
+                # line 2--n-1
+                x0 = 0
+                y0 = (cur_line_num + 1) * line_height
+                x1 = image.width
+                y0 = end_line_num * line_height
+                draw.rectangle([x0, y0, x1, y1], fill=line[1])
+
+            # 行 n
+            x0 = 0
+            y0 = (end_line_num) * line_height
+            x1 = new_width % image.width
+            y1 = (end_line_num + 1) * line_height
+            draw.rectangle([x0, y0, x1, y1], fill=line[1])
+
+        else:
+            # 画单行 glitch
+            x0 = cur_width % image.width
+            y0 = cur_line_num * line_height
+            x1 = new_width % image.width
+            y1 = (cur_line_num + 1) * line_height
+
+            #绘制矩形
+            draw.rectangle([x0, y0, x1, y1], fill=line[1])
+
+        cur_width = new_width
+
+#描述返回类型
+def gen_glitch_lines(
+        #生成 glitch 的总宽度，大小，期望宽度，标准差
+        total_width: int, cell_size: int, expected_width: float,
+        width_fluctuate: float) -&gt; List[Tuple[int, Tuple[int, int, int]]]:
+    current_width = 0
+    lines = []
+    while current_width &lt; total_width:
+        #round(x,n)数字表达式和位数，返回四舍五入值，低精度
+        line_width = round(
+            round(
+                #返回指数
+                math.exp(
+                    #正态分布random.normalvariate(mu, sigma)
+                    random.normalvariate(math.log(expected_width),
+                                         width_fluctuate)) / cell_size) *
+            cell_size)
+        if line_width == 0: continue
+        line_color = gen_saturated_color()
+        current_width += line_width
+        #尾部添加对象
+        lines.append((line_width, line_color))
+    return lines
+
+
+#dpi = 150
+#real_size = (210.0, 297.0)
+# 英寸换算
+#size = (int(real_size[0] / 2.54 * dpi), int(real_size[1] / 2.54 * dpi))
+size = (2560, 1440)
+#底色为黑色
+img = Image.new('RGB', size)
+
+draw_glitch_line(img, 8)
+img.save(&quot;sample.png&quot;, &quot;png&quot;)
+
+</code></pre>
 ]]></content>
     </entry>
 </feed>
