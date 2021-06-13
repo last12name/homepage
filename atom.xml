@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://last12name.github.io/</id>
     <title>Gridea</title>
-    <updated>2021-06-13T11:12:24.529Z</updated>
+    <updated>2021-06-13T11:17:46.771Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://last12name.github.io/"/>
     <link rel="self" href="https://last12name.github.io/atom.xml"/>
@@ -16,7 +16,7 @@
         <link href="https://last12name.github.io/post/hello-gridea/">
         </link>
         <updated>2018-12-11T16:00:00.000Z</updated>
-        <content type="html"><![CDATA[<p>a Demo of Glitch Wallpaper Generater</p>
+        <content type="html"><![CDATA[<p><strong>a Demo of Glitch Wallpaper Generater</strong></p>
 <pre><code>from typing import List, Tuple
 from PIL import Image, ImageDraw, ImageColor
 import math
@@ -146,6 +146,8 @@ draw_glitch_line(img, 8)
 img.save(&quot;sample.png&quot;, &quot;png&quot;)
 
 </code></pre>
+<p>eg:<br>
+<img src="https://last12name.github.io//post-images/1623583038402.png" alt="" loading="lazy"></p>
 ]]></content>
     </entry>
 </feed>
